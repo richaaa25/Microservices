@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user
+  template:
+    metadata:
+      labels:
+        app: user
+    spec:
+      containers:
+      - name: user
+        image: richachoudhary/user:latest
+        
+        env:
+        - name: spring.datasource.url
+          value: mysql-service
+        - name: spring.datasource.username
+          value: root
+        - name: spring.datasource.password
+          valueFrom:
+            secretKeyRef:
+               name: my-db-pass
+               key: password
+        - name: JAEGER_HOST
+          value: jaeger-agent
+        ports:
+        - containerPort: 8080
